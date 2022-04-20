@@ -43,7 +43,7 @@ while True:
         is_record = False       # 녹화상태를 꺼줌
         video.release()         # 녹화 종료
     elif key == ord('c'):       # c 키를 누르면
-        # (파일이름, (영어만)), 이미지)로 영상을 캡쳐하여 그림파일로 저장
+        # (파일이름, (영어만), 이미지)로 영상을 캡쳐하여 그림파일로 저장
         cv2.imwrite("capture " + nowDatetime_path + ".png", frame)  # 파일이름(한글안됨), 이미지 
     elif key == ord('q'):  # 키보드의 q 를 누르면 무한루프가 멈춤
             break
