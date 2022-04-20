@@ -13,9 +13,6 @@ import pyupbit
 import paho.mqtt.client as mqtt
 import threading
 
-
-
-
 button = Button(21)
 red = LED(16)
 green = LED(20)
@@ -349,5 +346,3 @@ while(True):
     if(mqtt_msg == "xrp"):
         mqtt_msg = ""
         print_current_coin("KRW-XRP")
-
-
