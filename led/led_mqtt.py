@@ -12,32 +12,33 @@ def connect_result(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, message):
+    global pwm_led 
     myval = int(message.payload.decode('utf-8'))
     
     if 0<=myval<=100:
         pwm_led.ChangeDutyCycle(myval)
 
-
 led_pin = 13
 
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 GPIO.setup(led_pin, GPIO.OUT)
 
 pwm_led = GPIO.PWM(led_pin, 500)
 pwm_led.start(100)
 
+def main():
+    try:
+        mqttClient = mqtt.Client()
+        mqttClient.on_connect = connect_result
+        mqttClient.on_message = on_message
+        mqttClient.connect("172.30.1.33", 1883, 60)
+        mqttClient.loop_forever()
 
-try:
-    mqttClient = mqtt.Client()
-    mqttClient.on_connect = connect_result 
-    mqttClient.on_message = on_message 
-    mqttClient.connect("172.30.1.33", 1883, 60)
-    mqttClient.loop_forever()
-
-except KeyboardInterrupt:
-    pass
-finally:
-    pass
+    except KeyboardInterrupt:
+        pass
+    finally:
+        pass
 
 
-GPIO.cleanup()
+    GPIO.cleanup()

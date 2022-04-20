@@ -1,43 +1,49 @@
 from numpy import true_divide
 import requests
-from gpiozero import LED
-from gpiozero import Button
+from gpiozero import LED, Button
 from pydub import AudioSegment
 from pydub.playback import play
 import sounddevice as sd
 import soundfile as sf
-import io
-import json
+import io, json, threading
 from time import sleep
 import pyupbit
 import paho.mqtt.client as mqtt
-import threading
 
 
 
-
-button = Button(21)
-red = LED(16)
-green = LED(20)
-blue = LED(12)
-yellow = LED(19)
-seconds = 5
-fs = 16000
-mqtt_msg = ""
-kakao_audio_url =  "https://kakaoi-newtone-openapi.kakao.com/v1/synthesize"
-openweather_api_url = "https://api.openweathermap.org/data/2.5/"
-kakao_speech_url = "https://kakaoi-newtone-openapi.kakao.com/v1/recognize" 
-API_KEY = '218c73d60692af6965fa11c043c3bf2d'
-rest_api_key = '0cc8a9986f19c2206904038cf941e3c7'
-HEADERS = {
-    "Content-Type" : "application/xml",
-    "Authorization" : "KakaoAK 0cc8a9986f19c2206904038cf941e3c7"
-}
-headers_speech = {
-    "Content-Type": "application/octet-stream",
-    "X-DSS-Service": "DICTATION",
-    "Authorization": "KakaoAK "+ rest_api_key,
+def main():
+    button = Button(21)
+    red = LED(16)
+    green = LED(20)
+    blue = LED(12)
+    yellow = LED(19)
+    seconds = 5
+    fs = 16000
+    mqtt_msg = ""
+    kakao_audio_url =  "https://kakaoi-newtone-openapi.kakao.com/v1/synthesize"
+    openweather_api_url = "https://api.openweathermap.org/data/2.5/"
+    kakao_speech_url = "https://kakaoi-newtone-openapi.kakao.com/v1/recognize" 
+    API_KEY = '218c73d60692af6965fa11c043c3bf2d'
+    rest_api_key = '0cc8a9986f19c2206904038cf941e3c7'
+    HEADERS = {
+        "Content-Type" : "application/xml",
+        "Authorization" : "KakaoAK 0cc8a9986f19c2206904038cf941e3c7"
     }
+    headers_speech = {
+        "Content-Type": "application/octet-stream",
+        "X-DSS-Service": "DICTATION",
+        "Authorization": "KakaoAK "+ rest_api_key,
+        }
+
+    
+    weather = get_weather('suwon')
+    airpollution = getNowAirPollution(weather['coord']['lat'],weather['coord']['lon'])
+
+    client = mqtt.Client()
+
+    t = threading.Thread(target = mqtt)
+    t.start()
 
 
 def get_weather(city='Seoul'):
@@ -72,10 +78,7 @@ def getNowAirPollution(pos_lat, pos_lon):
     return airpollution
     
 
-    
 
-weather = get_weather('suwon')
-airpollution = getNowAirPollution(weather['coord']['lat'],weather['coord']['lon'])
 def question():
     DATA = """
     <speak>

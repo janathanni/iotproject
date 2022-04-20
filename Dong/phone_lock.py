@@ -15,7 +15,7 @@ class SleepManager(Thread):
     H,m = b.split(':')
     self.sleep_time = datetime(int(Y),int(M),int(D),int(H),int(m),0)
 
-  def begin_timer(self):
+  def begin_timer(self, servo):
     then = self.sleep_time
     now = datetime.now()
     duration = then - now
@@ -26,16 +26,16 @@ class SleepManager(Thread):
     servo.angle = 90
     sleep(1)
 
+def main():
+  from gpiozero.pins.pigpio import PiGPIOFactory
 
-from gpiozero.pins.pigpio import PiGPIOFactory
+  factory = PiGPIOFactory()
 
-factory = PiGPIOFactory()
+  servo = AngularServo(18, min_angle=-90, max_angle=90, min_pulse_width=0.0004, max_pulse_width=0.0024,pin_factory=factory)
+  t = SleepManager("2022/04/20@13:01")      # 매개변수로 YYYY/MM/DD@HH/MM 포맷을 맞춰주세요. ex) 2022/04/17@22:00
+  t.start()
+  t.begin_timer(servo = servo)
 
-servo = AngularServo(19, min_angle=-90, max_angle=90, min_pulse_width=0.0004, max_pulse_width=0.0024,pin_factory=factory)
-t = SleepManager("2022/04/17@22:38")      # 매개변수로 YYYY/MM/DD@HH/MM 포맷을 맞춰주세요. ex) 2022/04/17@22:00
-t.start()
-t.begin_timer()
+  print('### End ###')
 
-  
-print('### End ###')
-
+main()

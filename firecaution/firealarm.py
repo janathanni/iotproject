@@ -7,7 +7,7 @@ import paho.mqtt.client as mqtt
 
 #Publish for android mqtt. server : RPi
 
-def readadc(adcnum):
+def readadc(adcnum, spi):
     if adcnum < 0 or adcnum > 7:
         return -1
     r = spi.xfer2([1, 8+adcnum <<4, 0])
@@ -39,31 +39,34 @@ def fire_alarm():
     p.terminate()
 
 def main():
+    led = LED(19)
+    pot_channel = 7
+
+    spi = spidev.SpiDev()
+    spi.open(0,0)
+    spi.max_speed_hz = 100000
+
     client = mqtt.Client()
 
     try:
         client.connect("localhost", 1883, 60)
 
-        pot_value = readadc(pot_channel)
-        
-        if pot_value < 1020:
-            print("LDR value: %d" % pot_value)
-            client.publish("iot/fire", "Fire!!")
+        while True:
+            pot_value = readadc(pot_channel, spi)
 
-        else:
-            print("LDR value: %d" % pot_value)
-            client.publish("iot/fire", "No Fire!!")
+            if pot_value < 1020:
+                led.on()
+                print("LDR value: %d" % pot_value)
+                client.publish("iot/fire", "Fire!!")
+                time.sleep(1)
 
-        client.loop_forever()
+
+            else:
+                led.off()
+                print("LDR value: %d" % pot_value)
+                client.publish("iot/fire", "No Fire!!")
+                time.sleep(1)
+
     
     except Exception as err:
         print('에러 : %s'%err)
-
-led = LED(19)
-pot_channel = 7
-
-spi = spidev.SpiDev()
-spi.open(0,0)
-spi.max_speed_hz = 100000
-
-main()
