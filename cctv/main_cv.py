@@ -36,13 +36,14 @@ while True:
     key = cv2.waitKey(30)   # 30ms 동안 키입력 대기
     if key == ord('r') and is_record == False:  # 현재 녹화상태가 아니며 r 키를 누르면
         is_record = True            # 녹화상태로 만들어줌
-        # 비디오 객체에 (파일이름(한글가능), 인코더, 초당프레임률(정확하지 않음), 영상크기) 로 영상을 쓸 준비
+
+        # 비디오 객체에 (파일이름 (영어만), 인코더, 초당프레임률(정확하지 않음), 영상크기) 로 영상을 쓸 준비
         video = cv2.VideoWriter("web_cam" + nowDatetime_path + ".avi", fourcc, 15, (frame.shape[1], frame.shape[0]))
     elif key == ord('r') and is_record == True: # 녹화중인 상태에서 다시 r키를 누르면
         is_record = False       # 녹화상태를 꺼줌
         video.release()         # 녹화 종료
     elif key == ord('c'):       # c 키를 누르면
-        # (파일이름(한글불가, 영어만), 이미지)로 영상을 캡쳐하여 그림파일로 저장
+        # (파일이름, (영어만)), 이미지)로 영상을 캡쳐하여 그림파일로 저장
         cv2.imwrite("capture " + nowDatetime_path + ".png", frame)  # 파일이름(한글안됨), 이미지 
     elif key == ord('q'):  # 키보드의 q 를 누르면 무한루프가 멈춤
             break
