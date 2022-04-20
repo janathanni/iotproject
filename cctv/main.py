@@ -21,7 +21,11 @@ while True:
     nowDatetime_path = now.strftime('%Y-%m-%d %H_%M_%S') 
     ret, frame = capture.read()    
 
-    cv2.imshow("original", frame)
+    frame = Image.fromarray(frame)    
+    draw = ImageDraw.Draw(frame)  
+    draw.text(xy=(10, 15),  text="IOT_3 Webcam "+nowDatetime, font=font, fill=(255, 255, 255))
+    frame = np.array(frame)
+
     key = cv2.waitKey(30)
     if key == ord('r') and is_record == False: 
         is_record = True           
