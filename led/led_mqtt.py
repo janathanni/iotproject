@@ -1,27 +1,31 @@
+import RPi.GPIO as GPIO
 import paho.mqtt.client as mqtt 
-from gpiozero import LED
-
-#subscribe from android mqtt. server : PC
 
 def connect_result(client, userdata, flags, rc):
     print("connect . .. " + str(rc))
 
     if rc == 0:
-        client.subscribe("iot/led")
+        client.subscribe("iot/light")
     
     else:
         print("연결실패ㅣ...")
 
 
 def on_message(client, userdata, message):
-    myval = message.payload.decode('utf-8')
-    if myval == 'on':
-        led.on()
+    myval = int(message.payload.decode('utf-8'))
     
-    else:
-        led.off()
+    if 0<=myval<=100:
+        pwm_led.ChangeDutyCycle(myval)
 
-led = LED(19)
+
+led_pin = 13
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(led_pin, GPIO.OUT)
+
+pwm_led = GPIO.PWM(led_pin, 500)
+pwm_led.start(100)
+
 
 try:
     mqttClient = mqtt.Client()
@@ -34,3 +38,6 @@ except KeyboardInterrupt:
     pass
 finally:
     pass
+
+
+GPIO.cleanup()
