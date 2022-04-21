@@ -1,0 +1,12 @@
+{
+  "additionalFiles": "",
+  "builtInLibrariesFolders": "/Users/kimdonghyun/Applications/Arduino.app/Contents/Java/libraries",
+  "builtInToolsFolders": "/Users/kimdonghyun/Applications/Arduino.app/Contents/Java/tools-builder,/Users/kimdonghyun/Applications/Arduino.app/Contents/Java/hardware/tools/avr,/Users/kimdonghyun/Library/Arduino15/packages",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "build.path=/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build,build.warn_data_percentage=75,runtime.tools.mkspiffs.path=/Users/kimdonghyun/Library/Arduino15/packages/esp8266/tools/mkspiffs/3.0.4-gcc10.3-1757bed,runtime.tools.mkspiffs-3.0.4-gcc10.3-1757bed.path=/Users/kimdonghyun/Library/Arduino15/packages/esp8266/tools/mkspiffs/3.0.4-gcc10.3-1757bed,runtime.tools.python3.path=/Users/kimdonghyun/Library/Arduino15/packages/esp8266/tools/python3/3.7.2-post1,runtime.tools.python3-3.7.2-post1.path=/Users/kimdonghyun/Library/Arduino15/packages/esp8266/tools/python3/3.7.2-post1,runtime.tools.mklittlefs.path=/Users/kimdonghyun/Library/Arduino15/packages/esp8266/tools/mklittlefs/3.0.4-gcc10.3-1757bed,runtime.tools.mklittlefs-3.0.4-gcc10.3-1757bed.path=/Users/kimdonghyun/Library/Arduino15/packages/esp8266/tools/mklittlefs/3.0.4-gcc10.3-1757bed,runtime.tools.xtensa-lx106-elf-gcc.path=/Users/kimdonghyun/Library/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.0.4-gcc10.3-1757bed,runtime.tools.xtensa-lx106-elf-gcc-3.0.4-gcc10.3-1757bed.path=/Users/kimdonghyun/Library/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.0.4-gcc10.3-1757bed",
+  "fqbn": "esp8266:esp8266:nodemcuv2:xtal=80,vt=flash,exception=disabled,stacksmash=disabled,ssl=all,mmu=3232,non32xfer=fast,eesz=4M2M,led=2,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=115200",
+  "hardwareFolders": "/Users/kimdonghyun/Applications/Arduino.app/Contents/Java/hardware,/Users/kimdonghyun/Library/Arduino15/packages",
+  "otherLibrariesFolders": "/Users/kimdonghyun/Documents/Arduino/libraries",
+  "runtime.ide.version": "10819",
+  "sketchLocation": "/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/remote_light/app.ino"
+}

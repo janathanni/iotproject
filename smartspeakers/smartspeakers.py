@@ -1,49 +1,40 @@
 from numpy import true_divide
 import requests
-from gpiozero import LED, Button
+from gpiozero import LED
+from gpiozero import Button
 from pydub import AudioSegment
 from pydub.playback import play
 import sounddevice as sd
 import soundfile as sf
-import io, json, threading
+import io
+import json
 from time import sleep
 import pyupbit
 import paho.mqtt.client as mqtt
+import threading
 
-
-
-def main():
-    button = Button(21)
-    red = LED(16)
-    green = LED(20)
-    blue = LED(12)
-    yellow = LED(19)
-    seconds = 5
-    fs = 16000
-    mqtt_msg = ""
-    kakao_audio_url =  "https://kakaoi-newtone-openapi.kakao.com/v1/synthesize"
-    openweather_api_url = "https://api.openweathermap.org/data/2.5/"
-    kakao_speech_url = "https://kakaoi-newtone-openapi.kakao.com/v1/recognize" 
-    API_KEY = '218c73d60692af6965fa11c043c3bf2d'
-    rest_api_key = '0cc8a9986f19c2206904038cf941e3c7'
-    HEADERS = {
-        "Content-Type" : "application/xml",
-        "Authorization" : "KakaoAK 0cc8a9986f19c2206904038cf941e3c7"
+button = Button(21)
+red = LED(16)
+green = LED(20)
+blue = LED(12)
+yellow = LED(19)
+seconds = 5
+fs = 16000
+mqtt_msg = ""
+kakao_audio_url =  "https://kakaoi-newtone-openapi.kakao.com/v1/synthesize"
+openweather_api_url = "https://api.openweathermap.org/data/2.5/"
+kakao_speech_url = "https://kakaoi-newtone-openapi.kakao.com/v1/recognize" 
+API_KEY = '218c73d60692af6965fa11c043c3bf2d'
+rest_api_key = '0cc8a9986f19c2206904038cf941e3c7'
+HEADERS = {
+    "Content-Type" : "application/xml",
+    "Authorization" : "KakaoAK 0cc8a9986f19c2206904038cf941e3c7"
+}
+headers_speech = {
+    "Content-Type": "application/octet-stream",
+    "X-DSS-Service": "DICTATION",
+    "Authorization": "KakaoAK "+ rest_api_key,
     }
-    headers_speech = {
-        "Content-Type": "application/octet-stream",
-        "X-DSS-Service": "DICTATION",
-        "Authorization": "KakaoAK "+ rest_api_key,
-        }
-
-    
-    weather = get_weather('suwon')
-    airpollution = getNowAirPollution(weather['coord']['lat'],weather['coord']['lon'])
-
-    client = mqtt.Client()
-
-    t = threading.Thread(target = mqtt)
-    t.start()
 
 
 def get_weather(city='Seoul'):
@@ -78,7 +69,10 @@ def getNowAirPollution(pos_lat, pos_lon):
     return airpollution
     
 
+    
 
+weather = get_weather('suwon')
+airpollution = getNowAirPollution(weather['coord']['lat'],weather['coord']['lon'])
 def question():
     DATA = """
     <speak>
@@ -214,7 +208,7 @@ def mqtt():
     
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect("192.168.0.3",1883,60)
+    client.connect("172.30.1.254",1883,60)
     client.loop_forever()
 
 
@@ -241,47 +235,96 @@ def rasp_trans(text):
     client.publish("Mqtt_pb", msg)
     return translated
 
-air_condition = ""
-if (airpollution['airpollution'] == 2 or airpollution['airpollution'] == 3 or airpollution['airpollution'] == 4 or airpollution['airpollution'] == 5):
-    air_condition = "미세먼지가 심하니 마스크를 껴주시기 바랍니다."
-else:
-    air_condition = "오늘 공기는 맑으니 마스크는 안끼셔도 되겠습니다."
-umbrella = ""
-if ((weather['main']).find("Rain") == 0):
-    umbrella = "밖에 비가 오니 우산을 챙기셔야 합니다."
 
-if ((weather['main']).find("Snow") == 0):
-    umbrella = "밖에 눈이 오니 우산을 챙기셔야 합니다."
+def main():
+    air_condition = ""
+    if (airpollution['airpollution'] == 2 or airpollution['airpollution'] == 3 or airpollution['airpollution'] == 4 or airpollution['airpollution'] == 5):
+        air_condition = "미세먼지가 심하니 마스크를 껴주시기 바랍니다."
+    else:
+        air_condition = "오늘 공기는 맑으니 마스크는 안끼셔도 되겠습니다."
+    umbrella = ""
+    if ((weather['main']).find("Rain") == 0):
+        umbrella = "밖에 비가 오니 우산을 챙기셔야 합니다."
+
+    if ((weather['main']).find("Snow") == 0):
+        umbrella = "밖에 눈이 오니 우산을 챙기셔야 합니다."
 
 
-while(True):
-    if(weather['main'] == 'Clouds'):
-        green.on()
-    if(weather['main'] == 'Clear'):
-        red.on()
-    if(weather['main'] == 'Rain' or weather['main'] == 'Snow'):
-        blue.on()
-    if(airpollution['airpollution'] == 2 or airpollution['airpollution'] == 3 or airpollution['airpollution'] == 4 or airpollution['airpollution'] == 5):
-        yellow.on()
-    if button.is_pressed:
-        mqtt_msg = ""
-        question()
-        answer = recoding()
-        if(answer == "날씨 알려줘"):
+    while(True):
+        if(weather['main'] == 'Clouds'):
+            green.on()
+        if(weather['main'] == 'Clear'):
+            red.on()
+        if(weather['main'] == 'Rain' or weather['main'] == 'Snow'):
+            blue.on()
+        if(airpollution['airpollution'] == 2 or airpollution['airpollution'] == 3 or airpollution['airpollution'] == 4 or airpollution['airpollution'] == 5):
+            yellow.on()
+        if button.is_pressed:
+            mqtt_msg = ""
+            question()
+            answer = recoding()
+            if(answer == "날씨 알려줘"):
+                DATA = f"""
+                <speak>
+                오늘의 날씨는 {weather['description']} 입니다.
+                {umbrella}
+                그리고 온도는 {(weather['etc']['temp'])} 도이고 
+                습도는  {weather['etc']['humidity']} 퍼센트입니다.
+                미세먼지 심각 레벨은 {airpollution['airpollution']} 레벨 입니다. 
+                {air_condition}
+                </speak>
+                """
+                output_text(DATA)
+
+            if(answer == "번역기 틀어줘"):
+                translated_text = translate()
+                print(translated_text)
+                DATA = f"""
+                <speak>
+                <voice name="MAN_DIALOG_BRIGHT">{translated_text}</voice>
+                </speak>
+                """
+                output_text(DATA)
+
+            if(answer == "비트코인 시세 알려줘"):
+                print_current_coin("KRW-BTC")
+            if(answer == "이더리움 시세 알려줘"):
+                print_current_coin("KRW-ETH")
+            if(answer == "sandbox 시세 알려줘"):
+                print_current_coin("KRW-SAND")
+            if(answer == "라이트 코인 시세 알려줘"):
+                print_current_coin("KRW-LTC")
+            if(answer == "리플 시세 알려줘"):
+                print_current_coin("KRW-XRP")
+
+        if(mqtt_msg == "weather"):
+            mqtt_msg = ""
             DATA = f"""
-            <speak>
-            오늘의 날씨는 {weather['description']} 입니다.
-            {umbrella}
-            그리고 온도는 {(weather['etc']['temp'])} 도이고 
-            습도는  {weather['etc']['humidity']} 퍼센트입니다.
-            미세먼지 심각 레벨은 {airpollution['airpollution']} 레벨 입니다. 
-            {air_condition}
-            </speak>
-            """
+                <speak>
+                오늘의 날씨는 {weather['description']} 입니다.
+                {umbrella}
+                그리고 온도는 {(weather['etc']['temp'])} 도이고 
+                습도는  {weather['etc']['humidity']} 퍼센트입니다.
+                미세먼지 심각 레벨은 {airpollution['airpollution']} 레벨 입니다. 
+                {air_condition}
+                </speak>
+                """
             output_text(DATA)
-
-        if(answer == "번역기 틀어줘"):
-            translated_text = translate()
+        # if(mqtt_filtering(mqtt_msg) == "translate"):
+        #     mqtt_msg = ""
+        #     translated_text = translate()
+        #     print(translated_text)
+        #     DATA = f"""
+        #     <speak>
+        #     <voice name="MAN_DIALOG_BRIGHT">{translated_text}</voice>
+        #     </speak>
+        #     """
+        #     output_text(DATA)
+        if "trans" in mqtt_msg:
+            msg = mqtt_msg[5:]
+            mqtt_msg = ""
+            print(msg)
+            translated_text = rasp_trans(msg)
             print(translated_text)
             DATA = f"""
             <speak>
@@ -289,68 +332,19 @@ while(True):
             </speak>
             """
             output_text(DATA)
-
-        if(answer == "비트코인 시세 알려줘"):
+        
+        if(mqtt_msg == "btc"):
+            mqtt_msg = ""
             print_current_coin("KRW-BTC")
-        if(answer == "이더리움 시세 알려줘"):
+        if(mqtt_msg == "eth"):
+            mqtt_msg = ""
             print_current_coin("KRW-ETH")
-        if(answer == "sandbox 시세 알려줘"):
+        if(mqtt_msg == "sand"):
+            mqtt_msg = ""
             print_current_coin("KRW-SAND")
-        if(answer == "라이트 코인 시세 알려줘"):
+        if(mqtt_msg == "ltc"):
+            mqtt_msg = ""
             print_current_coin("KRW-LTC")
-        if(answer == "리플 시세 알려줘"):
+        if(mqtt_msg == "xrp"):
+            mqtt_msg = ""
             print_current_coin("KRW-XRP")
-
-    if(mqtt_msg == "weather"):
-        mqtt_msg = ""
-        DATA = f"""
-            <speak>
-            오늘의 날씨는 {weather['description']} 입니다.
-            {umbrella}
-            그리고 온도는 {(weather['etc']['temp'])} 도이고 
-            습도는  {weather['etc']['humidity']} 퍼센트입니다.
-            미세먼지 심각 레벨은 {airpollution['airpollution']} 레벨 입니다. 
-            {air_condition}
-            </speak>
-            """
-        output_text(DATA)
-    # if(mqtt_filtering(mqtt_msg) == "translate"):
-    #     mqtt_msg = ""
-    #     translated_text = translate()
-    #     print(translated_text)
-    #     DATA = f"""
-    #     <speak>
-    #     <voice name="MAN_DIALOG_BRIGHT">{translated_text}</voice>
-    #     </speak>
-    #     """
-    #     output_text(DATA)
-    if "trans" in mqtt_msg:
-        msg = mqtt_msg[5:]
-        mqtt_msg = ""
-        print(msg)
-        translated_text = rasp_trans(msg)
-        print(translated_text)
-        DATA = f"""
-        <speak>
-        <voice name="MAN_DIALOG_BRIGHT">{translated_text}</voice>
-        </speak>
-        """
-        output_text(DATA)
-    
-    if(mqtt_msg == "btc"):
-        mqtt_msg = ""
-        print_current_coin("KRW-BTC")
-    if(mqtt_msg == "eth"):
-        mqtt_msg = ""
-        print_current_coin("KRW-ETH")
-    if(mqtt_msg == "sand"):
-        mqtt_msg = ""
-        print_current_coin("KRW-SAND")
-    if(mqtt_msg == "ltc"):
-        mqtt_msg = ""
-        print_current_coin("KRW-LTC")
-    if(mqtt_msg == "xrp"):
-        mqtt_msg = ""
-        print_current_coin("KRW-XRP")
-
-

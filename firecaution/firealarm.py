@@ -14,32 +14,32 @@ def readadc(adcnum, spi):
     data = ((r[1] & 3) << 8) + r[2]
     return data
 
-def fire_alarm():
-    CHUNK = 1024
-    WAVE_FILENAME = "fire_alarm.wav"
+# def fire_alarm():
+#     CHUNK = 1024
+#     WAVE_FILENAME = "fire_alarm.wav"
 
-    wf = wave.open(WAVE_FILENAME, 'rb')
+#     wf = wave.open(WAVE_FILENAME, 'rb')
 
-    p = pyaudio.PyAudio()
+#     p = pyaudio.PyAudio()
 
-    stream = p.open(format = p.get_format_from_width(wf.getsampwidth()),
-                channels = wf.getnchannels(),
-                rate = wf.getframerate(),
-                output = True)
+#     stream = p.open(format = p.get_format_from_width(wf.getsampwidth()),
+#                 channels = wf.getnchannels(),
+#                 rate = wf.getframerate(),
+#                 output = True)
 
-    data = wf.readframes(CHUNK)
+#     data = wf.readframes(CHUNK)
 
-    while data:
-        stream.write(data)
-        data = wf.readframes(CHUNK)
+#     while data:
+#         stream.write(data)
+#         data = wf.readframes(CHUNK)
     
-    stream.stop_stream()
-    stream.close()
+#     stream.stop_stream()
+#     stream.close()
 
-    p.terminate()
+#     p.terminate()
 
 def main():
-    led = LED(19)
+    led = LED(22)
     pot_channel = 7
 
     spi = spidev.SpiDev()
@@ -70,3 +70,6 @@ def main():
     
     except Exception as err:
         print('에러 : %s'%err)
+
+if __name__ == "__main__":
+    main()
