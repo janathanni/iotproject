@@ -1,4 +1,4 @@
-/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/libraries/Wire/Wire.cpp.o: \
+/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/libraries/Wire/Wire.cpp.o: \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/libraries/Wire/Wire.cpp \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/twi.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/Arduino.h \

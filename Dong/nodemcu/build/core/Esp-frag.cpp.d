@@ -1,4 +1,4 @@
-/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/core/Esp-frag.cpp.o: \
+/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/core/Esp-frag.cpp.o: \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/Esp-frag.cpp \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/umm_malloc/umm_malloc.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/umm_malloc/umm_malloc_cfg.h \

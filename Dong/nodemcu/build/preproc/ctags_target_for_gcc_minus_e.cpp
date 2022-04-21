@@ -1,8 +1,8 @@
-# 1 "/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/remote_light/app.ino"
-# 2 "/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/remote_light/app.ino" 2
-# 3 "/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/remote_light/app.ino" 2
-# 4 "/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/remote_light/app.ino" 2
-# 5 "/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/remote_light/app.ino" 2
+# 1 "/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/remote_light/app.ino"
+# 2 "/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/remote_light/app.ino" 2
+# 3 "/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/remote_light/app.ino" 2
+# 4 "/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/remote_light/app.ino" 2
+# 5 "/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/remote_light/app.ino" 2
 
 const char *ssid = "olleh_WiFi_05A8";
 const char *password = "0000000942";

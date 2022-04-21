@@ -2,8 +2,32 @@ import RPi.GPIO as GPIO
 import paho.mqtt.client as mqtt 
 # from phone_lock import SleepManager
 import window
+from time import sleep
 
-restSeconds = 0
+
+lockSeconds = 0
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+Ena,In1,In2 = 26,19,13
+
+GPIO.setup(Ena,GPIO.OUT)
+GPIO.setup(In1,GPIO.OUT)
+GPIO.setup(In2,GPIO.OUT)
+
+pwm = GPIO.PWM(Ena, 50)
+pwm.start(0)
+pwm.ChangeDutyCycle(50)
+
+def openWindow():
+  GPIO.output(In1, GPIO.LOW)
+  GPIO.output(In2, GPIO.HIGH)
+def closeWindow():
+  GPIO.output(In1, GPIO.HIGH)
+  GPIO.output(In2, GPIO.LOW)
+def cancelWindow():
+  GPIO.output(In1, GPIO.LOW)
+  GPIO.output(In2, GPIO.LOW)
 
 def connect_result(client, userdata, flags, rc):
     print("connect . .. " + str(rc))
@@ -15,14 +39,17 @@ def connect_result(client, userdata, flags, rc):
         print("연결실패ㅣ...")
 
 def on_message(client, userdata, message):
-    global restSeconds
+    global lockSeconds
     myval = message.payload.decode('utf-8')
     if myval == 'OPEN':
-        window.forward()
+        openWindow()
+
     elif(myval == 'NOTHING'):
-        print('nothing')
+        cancelWindow()
+
     elif(myval == 'CLOSE'):
-        window.reverse()
+        closeWindow()
+
 
     elif(myval == 'myroom turn off'):
         print('myroom turn off') 
@@ -40,12 +67,14 @@ def on_message(client, userdata, message):
         print('kitchen turn on') 
 
     else:
-        restSeconds = int(myval)
-        print(restSeconds)
+        lockSeconds = int(myval)
+        print(lockSeconds)
 
 def main():
     try:
-        window.windowInit()
+        GPIO.output(In1, GPIO.LOW)
+        GPIO.output(In2, GPIO.LOW)
+        print('controller.py')
         mqttClient = mqtt.Client()
         mqttClient.on_connect = connect_result 
         mqttClient.on_message = on_message 
