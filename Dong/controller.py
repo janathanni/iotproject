@@ -27,7 +27,7 @@ from gpiozero import AngularServo
 from phone_lock import SleepManager
 
 def main():
-    
+    os.system("sudo pigpiod")
     try:
         # factory = PiGPIOFactory()
         # servo = AngularServo(4, min_angle=-90, max_angle=90, min_pulse_width=0.0004, max_pulse_width=0.0024,pin_factory=factory)
@@ -99,5 +99,5 @@ def on_message(client, userdata, message):
         print('다른 곳으로 빠짐')
 
 
-
-main()
+if __name__ == "__main__":
+    main()
