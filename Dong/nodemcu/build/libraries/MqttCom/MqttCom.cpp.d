@@ -1,4 +1,4 @@
-/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/libraries/MqttCom/MqttCom.cpp.o: \
+/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/libraries/MqttCom/MqttCom.cpp.o: \
  /Users/kimdonghyun/Documents/Arduino/libraries/MqttCom/MqttCom.cpp \
  /Users/kimdonghyun/Documents/Arduino/libraries/MqttCom/MqttCom.h \
  /Users/kimdonghyun/Documents/Arduino/libraries/WifiMiniCom/WifiMiniCom.h \

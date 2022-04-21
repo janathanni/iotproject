@@ -14,7 +14,7 @@ if __name__ == "__main__":
     p1 = threading.Thread(target = firealarm.main)
     p2 = threading.Thread(target = cctv.main)
     p3 = threading.Thread(target = led_mqtt.main)
-    p4 = threading.Thread(target = smartspeakers.main)
+    p4 = threading.Thread(target = smartspeakers2.main)
     p1.start()
     p2.start()
     p3.start()
