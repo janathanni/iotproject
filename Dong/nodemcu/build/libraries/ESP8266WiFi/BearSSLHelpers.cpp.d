@@ -1,4 +1,4 @@
-/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/libraries/ESP8266WiFi/BearSSLHelpers.cpp.o: \
+/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/libraries/ESP8266WiFi/BearSSLHelpers.cpp.o: \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/libraries/ESP8266WiFi/src/BearSSLHelpers.cpp \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/libraries/ESP8266WiFi/src/BearSSLHelpers.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/tools/sdk/include/bearssl/bearssl.h \
@@ -61,4 +61,4 @@
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/WString.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/Stream.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/md5.h \
- /Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/core/Updater_Signing.h
+ /Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/core/Updater_Signing.h

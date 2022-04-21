@@ -1,5 +1,5 @@
-/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/sketch/app.ino.cpp.o: \
- /Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/sketch/app.ino.cpp \
+/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/sketch/app.ino.cpp.o: \
+ /Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/sketch/app.ino.cpp \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/Arduino.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/stdlib_noniso.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/binary.h \

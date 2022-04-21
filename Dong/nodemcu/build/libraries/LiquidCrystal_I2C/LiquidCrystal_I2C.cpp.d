@@ -1,4 +1,4 @@
-/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/libraries/LiquidCrystal_I2C/LiquidCrystal_I2C.cpp.o: \
+/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/libraries/LiquidCrystal_I2C/LiquidCrystal_I2C.cpp.o: \
  /Users/kimdonghyun/Documents/Arduino/libraries/LiquidCrystal_I2C/LiquidCrystal_I2C.cpp \
  /Users/kimdonghyun/Documents/Arduino/libraries/LiquidCrystal_I2C/LiquidCrystal_I2C.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/Print.h \

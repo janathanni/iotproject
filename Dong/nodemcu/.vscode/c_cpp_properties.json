@@ -20,7 +20,7 @@
             "includePath": [
                 "/Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/tools/sdk/include",
                 "/Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/tools/sdk/lwip2/include",
-                "/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/core",
+                "/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/core",
                 "/Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266",
                 "/Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/variants/nodemcu",
                 "/Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/libraries/ESP8266WiFi/src",

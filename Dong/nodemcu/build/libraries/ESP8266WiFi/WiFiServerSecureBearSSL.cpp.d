@@ -1,4 +1,4 @@
-/Users/kimdonghyun/developer/raspberrypi/project_pri/nodemcu/build/libraries/ESP8266WiFi/WiFiServerSecureBearSSL.cpp.o: \
+/Users/kimdonghyun/developer/raspberrypi/project_pri/Dong/nodemcu/build/libraries/ESP8266WiFi/WiFiServerSecureBearSSL.cpp.o: \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/libraries/ESP8266WiFi/src/WiFiServerSecureBearSSL.cpp \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/tools/sdk/include/osapi.h \
  /Users/kimdonghyun/Library/Arduino15/packages/esp8266/hardware/esp8266/3.0.2/cores/esp8266/user_config.h \
