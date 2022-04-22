@@ -11,12 +11,16 @@ import json
 from time import sleep
 import pyupbit
 import paho.mqtt.client as mqtt
-import threading
+from threading import Thread
 from food_repository import food_list, food_category
 import sys
 sys.path.append(r'/home/pi/workspace/phone_lock')               # 각자의 디렉토리를 작성해주세요.
 # from ..Dong import controller1
 from Dong import controller1 
+from firecaution import firealarm
+from cctv import ex_scene_adjustment
+
+
 
 
 
@@ -210,7 +214,7 @@ def mqtt():
     client.loop_forever()
 
 
-t = threading.Thread(target = mqtt)
+t = Thread(target = mqtt)
 t.start()
 
 def rasp_trans(text):
@@ -294,6 +298,9 @@ def select_category(kind, spicy, noodle):
 
 def main():
     controller1.Controller().start()
+    Thread(target = firealarm.main).start()
+    Thread(target = ex_scene_adjustment.main).start()
+
     mqtt_msg = ""
     air_condition = ""
     if (airpollution['airpollution'] == 2 or airpollution['airpollution'] == 3 or airpollution['airpollution'] == 4 or airpollution['airpollution'] == 5):
