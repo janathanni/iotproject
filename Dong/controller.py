@@ -75,7 +75,7 @@ class Controller(Thread):
         elif(myval == 'kitchen turn on'):
             print('kitchen turn on') 
         else:
-            print('다른 곳으로 빠짐')
+            pass
 
     def run(self):
         try:
