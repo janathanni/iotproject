@@ -35,6 +35,7 @@ $ sudo service motion restart
 
 5. 스트리밍 웹페이지에서 확인하기.
 http://ip번호:8081
+.
 
 
 6. 속도조절
