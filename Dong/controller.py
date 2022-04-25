@@ -12,13 +12,17 @@ from Dong.phone_lock import SleepManager
 
 
 class Controller(Thread):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, IP_address, ena, in1, in2):
+        Thread.__init__(self)
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
-        self.Ena = 26
-        self.In1 = 19
-        self.In2 = 13
+        # self.Ena = 26
+        # self.In1 = 27
+        # self.In2 = 13
+        self.Ena = ena
+        self.In1 = in1
+        self.In2 = in2
+        self.IP_address = IP_address
 
 
         GPIO.setup(self.Ena,GPIO.OUT)
@@ -41,16 +45,16 @@ class Controller(Thread):
         myval = message.payload.decode('utf-8')
         if myval == 'OPEN':
             print('OPEN')
-            GPIO.output(19, GPIO.LOW)
-            GPIO.output(13, GPIO.HIGH)
+            GPIO.output(self.In1, GPIO.LOW)
+            GPIO.output(self.In2, GPIO.HIGH)
         elif(myval == 'NOTHING'):
             print('NOTHING')
-            GPIO.output(19, GPIO.HIGH)
-            GPIO.output(13, GPIO.LOW)
+            GPIO.output(self.In1, GPIO.HIGH)
+            GPIO.output(self.In2, GPIO.LOW)
         elif(myval == 'CLOSE'):
             print('CLOSE')
-            GPIO.output(19, GPIO.LOW)
-            GPIO.output(13, GPIO.LOW)
+            GPIO.output(self.In1, GPIO.LOW)
+            GPIO.output(self.In2, GPIO.LOW)
 
         elif(myval.startswith('lockSeconds')):
             secs = myval.split(':')[-1]
@@ -88,7 +92,7 @@ class Controller(Thread):
             mqttClient = mqtt.Client()
             mqttClient.on_connect = self.connect_result 
             mqttClient.on_message = self.on_message 
-            mqttClient.connect("172.30.1.17", 1883, 60)
+            mqttClient.connect(self.IP_address, 1883, 60)
             mqttClient.loop_forever()
 
         except KeyboardInterrupt:

@@ -32,7 +32,7 @@ def main():
         mqttClient = mqtt.Client()
         mqttClient.on_connect = connect_result
         mqttClient.on_message = on_message
-        mqttClient.connect("172.30.1.33", 1883, 60)
+        mqttClient.connect("172.30.1.17", 1883, 60)
         mqttClient.loop_forever()
 
     except KeyboardInterrupt:
