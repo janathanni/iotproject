@@ -410,6 +410,43 @@ def main():
             if(answer == "리플 시세 알려줘"):
                 print_current_coin("KRW-XRP")
 
+        if(answer == "뭐먹지" or answer == '뭐 먹지'):
+                DATA = f"""
+                <speak>
+                한식, 중식, 일식, 양식, 간편식, 무관 중 선택해주세요.
+                </speak>
+                """
+                output_text(DATA)
+                answer1 = recoding()
+                if(answer1 in food_category[0]):
+                    output_text(f"""
+                    <speak>
+                    매움, 안매움, 무관 중 선택해주세요.
+                    </speak>
+                    """)
+                    answer2 = recoding()
+                    if(answer2 in food_category[1]):
+                        output_text(f"""
+                        <speak>
+                        누들, 비누들, 무관 중 선택해주세요.
+                        </speak>
+                        """)
+                        answer3 = recoding()
+                        if(answer3 in food_category[2]):
+                            output_text(f"""
+                            <speak>
+                            음식을 나열하겠습니다. 
+                            </speak>
+                            """)
+
+                if(answer1 in food_category[0] and answer2 in food_category[1] and answer3 in food_category[2]):
+                    for food in select_category(answer1, answer2, answer3):
+                        output_text(f"""
+                        <speak>
+                        {food}
+                        </speak>
+                        """)
+
         if(mqtt_msg == "weather"):
             mqtt_msg = ""
             DATA = f"""
