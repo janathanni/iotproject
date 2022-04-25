@@ -3,10 +3,12 @@ import datetime
 from PIL import ImageFont, ImageDraw, Image
 import numpy as np
 from threading import Thread
+import os
+import paho.mqtt.client as mqtt 
 # opencv python 코딩 기본 틀
 # 카메라 영상을 받아올 객체 선언 및 설정(영상 소스, 해상도 설정)
 class CCTV(Thread):
-    def __init__(self):
+    def __init__(self, IP_address):
         Thread.__init__(self)
         self.capture = cv2.VideoCapture(0)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
@@ -14,10 +16,32 @@ class CCTV(Thread):
         self.fourcc = cv2.VideoWriter_fourcc(*'XVID')  
         self.font = ImageFont.truetype('../cctv/fonts/SCDream6.otf', 20) 
         self.is_record = False
-    def run(self):
+        self.IP_address = IP_address
+    
+    def connect_result(self, client, userdata, flags, rc):
+        print("connect . .. " + str(rc))
+        if rc == 0:
+            client.subscribe("iot/cctv")
+        else:
+            print("연결실패ㅣ...")
 
-        # 무한루프
-        while True:
+    def on_message(self, client, userdata, message):
+        myval = message.payload.decode('utf-8')
+        print(myval)
+
+    def my_mqtt(self):
+        mqttClient = mqtt.Client()
+        mqttClient.on_connect = self.connect_result 
+        mqttClient.on_message = self.on_message 
+        mqttClient.connect(self.IP_address, 1883, 60)
+        mqttClient.loop_forever()
+    
+    def run(self):
+        # 무한루프        
+
+        Thread(target = self.my_mqtt).start()
+
+        while True:    
             now = datetime.datetime.now()
             nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
             nowDatetime_path = now.strftime('%Y-%m-%d %H_%M_%S') 
@@ -45,6 +69,10 @@ class CCTV(Thread):
                 video.write(frame)
                 cv2.circle(img=frame, center=(620, 15), radius=5, color=(0,0,255), thickness=-1)
             cv2.imshow("output", frame)
+        
         self.capture.release()                  
         cv2.destroyAllWindows()  
     
+
+if __name__ == "__main__":
+    CCTV("172.30.1.33").start()
