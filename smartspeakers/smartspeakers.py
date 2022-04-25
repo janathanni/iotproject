@@ -200,6 +200,8 @@ def print_current_coin(coin):
     
 client = mqtt.Client()
 def mqtt():
+    umbrella = ''
+    air_condition = ''
     def on_connect(client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
         client.subscribe("Mqtt")
@@ -207,6 +209,89 @@ def mqtt():
         global mqtt_msg
         # mqtt_msg = str(msg.payload)
         mqtt_msg = msg.payload.decode("UTF-8")
+        if(mqtt_msg!=''):
+            print(mqtt_msg)
+
+        if(mqtt_msg == 'food'):
+                print(mqtt_msg)
+                DATA = f"""
+                <speak>
+                한식, 중식, 일식, 양식, 간편식, 무관 중 선택해주세요.
+                </speak>
+                """
+                output_text(DATA)
+                answer1 = recoding()
+                if(answer1 in food_category[0]):
+                    output_text(f"""
+                    <speak>
+                    매움, 안매움, 무관 중 선택해주세요.
+                    </speak>
+                    """)
+                    answer2 = recoding()
+                    if(answer2 in food_category[1]):
+                        output_text(f"""
+                        <speak>
+                        누들, 비누들, 무관 중 선택해주세요.
+                        </speak>
+                        """)
+                        answer3 = recoding()
+                        if(answer3 in food_category[2]):
+                            output_text(f"""
+                            <speak>
+                            음식을 나열하겠습니다. 
+                            </speak>
+                            """)
+                if(answer1 in food_category[0] and answer2 in food_category[1] and answer3 in food_category[2]):
+                    for food in select_category(answer1, answer2, answer3):
+                        output_text(f"""
+                        <speak>
+                        {food}
+                        </speak>
+                        """)
+
+
+        if(mqtt_msg== "weather"):
+            mqtt_msg = ""
+            DATA = f"""
+                <speak>
+                오늘의 날씨는 {weather['description']} 입니다.
+                {umbrella}
+                그리고 온도는 {(weather['etc']['temp'])} 도이고 
+                습도는  {weather['etc']['humidity']} 퍼센트입니다.
+                미세먼지 심각 레벨은 {airpollution['airpollution']} 레벨 입니다. 
+                {air_condition}
+                </speak>
+                """
+            output_text(DATA)
+        if "trans" in mqtt_msg:
+            msg = mqtt_msg[5:]
+            mqtt_msg = ""
+            print(msg)
+            translated_text = rasp_trans(msg)
+            print(translated_text)
+            DATA = f"""
+            <speak>
+            <voice name="MAN_DIALOG_BRIGHT">{translated_text}</voice>
+            </speak>
+            """
+            output_text(DATA)
+
+        if(mqtt_msg.split(' ')[-1] == "btc"):
+            mqtt_msg = ""
+            print_current_coin("KRW-BTC")
+            print('여기가 실행이된다!!!')
+        if(mqtt_msg == "eth"):
+            mqtt_msg = ""
+            print_current_coin("KRW-ETH")
+        if(mqtt_msg == "sand"):
+            mqtt_msg = ""
+            print_current_coin("KRW-SAND")
+        if(mqtt_msg == "ltc"):
+            mqtt_msg = ""
+            print_current_coin("KRW-LTC")
+        if(mqtt_msg == "xrp"):
+            mqtt_msg = ""
+            print_current_coin("KRW-XRP")
     
     client.on_connect = on_connect
     client.on_message = on_message
@@ -215,7 +300,8 @@ def mqtt():
 
 
 t = Thread(target = mqtt)
-t.start()
+
+
 
 def rasp_trans(text):
     translate_url = "https://dapi.kakao.com/v2/translation/translate"
@@ -292,6 +378,8 @@ def main():
     controller.Controller(IP_address, ena, in1, in2).start()
     Thread(target = firealarm.main, args=(IP_address, fire_alarm)).start()
     cctv.CCTV().start()
+    t.start()
+
 
     mqtt_msg = ""
     air_condition = ""
@@ -389,82 +477,4 @@ def main():
             if(answer == "리플 시세 알려줘"):
                 print_current_coin("KRW-XRP")
 
-        if(mqtt_msg == 'food'):
-                DATA = f"""
-                <speak>
-                한식, 중식, 일식, 양식, 간편식, 무관 중 선택해주세요.
-                </speak>
-                """
-                output_text(DATA)
-                answer1 = recoding()
-                if(answer1 in food_category[0]):
-                    output_text(f"""
-                    <speak>
-                    매움, 안매움, 무관 중 선택해주세요.
-                    </speak>
-                    """)
-                    answer2 = recoding()
-                    if(answer2 in food_category[1]):
-                        output_text(f"""
-                        <speak>
-                        누들, 비누들, 무관 중 선택해주세요.
-                        </speak>
-                        """)
-                        answer3 = recoding()
-                        if(answer3 in food_category[2]):
-                            output_text(f"""
-                            <speak>
-                            음식을 나열하겠습니다. 
-                            </speak>
-                            """)
-                if(answer1 in food_category[0] and answer2 in food_category[1] and answer3 in food_category[2]):
-                    for food in select_category(answer1, answer2, answer3):
-                        output_text(f"""
-                        <speak>
-                        {food}
-                        </speak>
-                        """)
-
-
-        if(mqtt_msg == "weather"):
-            mqtt_msg = ""
-            DATA = f"""
-                <speak>
-                오늘의 날씨는 {weather['description']} 입니다.
-                {umbrella}
-                그리고 온도는 {(weather['etc']['temp'])} 도이고 
-                습도는  {weather['etc']['humidity']} 퍼센트입니다.
-                미세먼지 심각 레벨은 {airpollution['airpollution']} 레벨 입니다. 
-                {air_condition}
-                </speak>
-                """
-            output_text(DATA)
-        if "trans" in mqtt_msg:
-            msg = mqtt_msg[5:]
-            mqtt_msg = ""
-            print(msg)
-            translated_text = rasp_trans(msg)
-            print(translated_text)
-            DATA = f"""
-            <speak>
-            <voice name="MAN_DIALOG_BRIGHT">{translated_text}</voice>
-            </speak>
-            """
-            output_text(DATA)
-        
-        if(mqtt_msg == "btc"):
-            mqtt_msg = ""
-            print_current_coin("KRW-BTC")
-        if(mqtt_msg == "eth"):
-            mqtt_msg = ""
-            print_current_coin("KRW-ETH")
-        if(mqtt_msg == "sand"):
-            mqtt_msg = ""
-            print_current_coin("KRW-SAND")
-        if(mqtt_msg == "ltc"):
-            mqtt_msg = ""
-            print_current_coin("KRW-LTC")
-        if(mqtt_msg == "xrp"):
-            mqtt_msg = ""
-            print_current_coin("KRW-XRP")
 main()
