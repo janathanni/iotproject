@@ -11,7 +11,18 @@ import json
 from time import sleep
 import pyupbit
 import paho.mqtt.client as mqtt
-import threading
+from threading import Thread
+from food_repository import food_list, food_category
+import sys
+sys.path.append(r'/home/pi/workspace/phone_lock')               # 각자의 디렉토리를 작성해주세요.
+# from ..Dong import controller1
+from Dong import controller1 
+from firecaution import firealarm
+from cctv import ex_scene_adjustment
+
+
+
+
 
 button = Button(21)
 red = LED(16)
@@ -71,8 +82,10 @@ def getNowAirPollution(pos_lat, pos_lon):
 
     
 
-weather = get_weather('suwon')
+weather = get_weather('Seoul')
 airpollution = getNowAirPollution(weather['coord']['lat'],weather['coord']['lon'])
+
+
 def question():
     DATA = """
     <speak>
@@ -138,8 +151,7 @@ def output_text(DATA):
     play(song)
 
 def print_current_coin(coin):
-
-
+    
     coin_value1 = pyupbit.get_current_price(coin)
     KRW_coin = ""
     msg = f"coin,{coin_value1}"
@@ -183,16 +195,6 @@ def print_current_coin(coin):
     </speak>
     """
     output_text(DATA)
-
-# def on_connect(client, userdata, flags, rc):
-#     print("Connected with result code "+str(rc))
-
-#     client.subscribe("Mqtt")
-
-# def on_message(client, userdata, msg):
-#     global mqtt_msg
-#     print(str(msg.payload))
-#     mqtt_msg = str(msg.payload)
     
 client = mqtt.Client()
 def mqtt():
@@ -208,11 +210,11 @@ def mqtt():
     
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect("172.30.1.254",1883,60)
+    client.connect("192.168.0.3",1883,60)
     client.loop_forever()
 
 
-t = threading.Thread(target = mqtt)
+t = Thread(target = mqtt)
 t.start()
 
 def rasp_trans(text):
@@ -235,8 +237,71 @@ def rasp_trans(text):
     client.publish("Mqtt_pb", msg)
     return translated
 
+# 한식 중식, 일식, 양식, 간편식, 무관
+# 매움 안매움 무관
+# 면류 비면류 무관
+def select_category(kind, spicy, noodle):
+    kind_selected_list = []
+    spicy_selected_list = []
+    noodle_selected_list = []
+    # 1kind 한식 2spicy 매움 3noodle 비면류
+    for food in food_list:
+        if(kind=='한식' and food[1]=='한식'):
+            kind_selected_list.append(food)
+        elif(kind=='중식'and food[1]=='중식'):
+            kind_selected_list.append(food)
+        elif(kind=='일식'and food[1]=='일식'):
+            kind_selected_list.append(food)
+        elif(kind=='양식'and food[1]=='양식'):
+            kind_selected_list.append(food)
+        elif(kind=='무관'):
+            kind_selected_list = food_list
+            break
+        else:
+            pass
+    
+    for food in kind_selected_list:
+        if((spicy=='매움' or spicy=='매운') and food[2]=='매움'):
+            spicy_selected_list.append(food)
+        elif((spicy=='안 매움' or spicy=='안매움') and food[2]=='안매움'):
+            spicy_selected_list.append(food)
+        elif(spicy=='무관'):
+            spicy_selected_list = kind_selected_list
+            break
+        else:
+            pass
+    
+    for food in spicy_selected_list:
+        if(noodle=='누들' and food[3]=='누들'):
+            noodle_selected_list.append(food)
+        elif(noodle=='비누들' and food[3]=='비누들'):
+            noodle_selected_list.append(food)
+        elif(noodle=='무관'):
+            noodle_selected_list = spicy_selected_list
+            break
+        else:
+            pass
+    final_list = []
+    for temp in noodle_selected_list:
+        final_list.append(temp[0])
+    return final_list
+
+
+
+
+
+#####################################################################################################################################################################
+#####################################################################################################################################################################
+#####################################################################################################################################################################
+#####################################################################################################################################################################
+#####################################################################################################################################################################
 
 def main():
+    controller1.Controller().start()
+    Thread(target = firealarm.main).start()
+    Thread(target = ex_scene_adjustment.main).start()
+
+    mqtt_msg = ""
     air_condition = ""
     if (airpollution['airpollution'] == 2 or airpollution['airpollution'] == 3 or airpollution['airpollution'] == 4 or airpollution['airpollution'] == 5):
         air_condition = "미세먼지가 심하니 마스크를 껴주시기 바랍니다."
@@ -259,6 +324,7 @@ def main():
             blue.on()
         if(airpollution['airpollution'] == 2 or airpollution['airpollution'] == 3 or airpollution['airpollution'] == 4 or airpollution['airpollution'] == 5):
             yellow.on()
+        #####################################################
         if button.is_pressed:
             mqtt_msg = ""
             question()
@@ -275,6 +341,53 @@ def main():
                 </speak>
                 """
                 output_text(DATA)
+
+            # 이름
+            # 한식 중식, 일식, 양식, 간편식, 무관
+            # 매움 안매움 무관
+            # 면류 비면류 무관
+
+
+            if(answer == "뭐먹지" or answer == '뭐 먹지'):
+                DATA = f"""
+                <speak>
+                한식, 중식, 일식, 양식, 간편식, 무관 중 선택해주세요.
+                </speak>
+                """
+                output_text(DATA)
+                answer1 = recoding()
+                if(answer1 in food_category[0]):
+                    output_text(f"""
+                    <speak>
+                    매움, 안매움, 무관 중 선택해주세요.
+                    </speak>
+                    """)
+                    answer2 = recoding()
+                    if(answer2 in food_category[1]):
+                        output_text(f"""
+                        <speak>
+                        누들, 비누들, 무관 중 선택해주세요.
+                        </speak>
+                        """)
+                        answer3 = recoding()
+                        if(answer3 in food_category[2]):
+                            output_text(f"""
+                            <speak>
+                            음식을 나열하겠습니다. 
+                            </speak>
+                            """)
+
+                if(answer1 in food_category[0] and answer2 in food_category[1] and answer3 in food_category[2]):
+                    for food in select_category(answer1, answer2, answer3):
+                        output_text(f"""
+                        <speak>
+                        {food}
+                        </speak>
+                        """)
+
+
+
+
 
             if(answer == "번역기 틀어줘"):
                 translated_text = translate()
@@ -310,16 +423,7 @@ def main():
                 </speak>
                 """
             output_text(DATA)
-        # if(mqtt_filtering(mqtt_msg) == "translate"):
-        #     mqtt_msg = ""
-        #     translated_text = translate()
-        #     print(translated_text)
-        #     DATA = f"""
-        #     <speak>
-        #     <voice name="MAN_DIALOG_BRIGHT">{translated_text}</voice>
-        #     </speak>
-        #     """
-        #     output_text(DATA)
+
         if "trans" in mqtt_msg:
             msg = mqtt_msg[5:]
             mqtt_msg = ""
@@ -348,3 +452,6 @@ def main():
         if(mqtt_msg == "xrp"):
             mqtt_msg = ""
             print_current_coin("KRW-XRP")
+
+
+main()

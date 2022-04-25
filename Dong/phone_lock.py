@@ -2,7 +2,6 @@ from gpiozero import AngularServo
 from time import sleep
 from datetime import datetime
 from threading import Thread
-import os
 
 # sudo pigpiod
 # You start the pigpio daemon
@@ -35,9 +34,6 @@ factory = PiGPIOFactory()
 
 servo = AngularServo(24, min_angle=-90, max_angle=90, min_pulse_width=0.0004, max_pulse_width=0.0024,pin_factory=factory)
 
-
 print('### End ###')
-  
 if __name__ == "__main__":
   main()
-
