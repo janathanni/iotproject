@@ -4,7 +4,8 @@ from PIL import ImageFont, ImageDraw, Image
 import numpy as np
 from threading import Thread
 import os
-import paho.mqtt.client as mqtt 
+import paho.mqtt.client as mqtt
+import pyautogui #pip3 install pyautogui
 # opencv python 코딩 기본 틀
 # 카메라 영상을 받아올 객체 선언 및 설정(영상 소스, 해상도 설정)
 class CCTV(Thread):
@@ -23,11 +24,20 @@ class CCTV(Thread):
         if rc == 0:
             client.subscribe("iot/cctv")
         else:
-            print("연결실패ㅣ...")
+            print("연결실패...")
 
     def on_message(self, client, userdata, message):
         myval = message.payload.decode('utf-8')
         print(myval)
+
+        if myval == 'c':
+            pyautogui.press('c')
+        
+        elif myval == 'q':
+            pyautogui.press('q')
+        
+        elif myval == 'r':
+            pyautogui.press('r')
 
     def my_mqtt(self):
         mqttClient = mqtt.Client()
