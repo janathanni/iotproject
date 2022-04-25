@@ -38,8 +38,8 @@ def readadc(adcnum, spi):
 
 #     p.terminate()
 
-def main():
-    led = LED(22)
+def main(IP_address, led):
+    led = LED(led)
     pot_channel = 7
 
     spi = spidev.SpiDev()
@@ -49,7 +49,9 @@ def main():
     client = mqtt.Client()
 
     try:
-        client.connect("localhost", 1883, 60)
+        # client.connect("localhost", 1883, 60)
+        client.connect(IP_address, 1883, 60)
+
 
         while True:
             pot_value = readadc(pot_channel, spi)
@@ -71,5 +73,5 @@ def main():
     except Exception as err:
         print('에러 : %s'%err)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

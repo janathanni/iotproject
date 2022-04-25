@@ -14,21 +14,50 @@ import paho.mqtt.client as mqtt
 from threading import Thread
 from food_repository import food_list, food_category
 import sys
-sys.path.append(r'/home/pi/workspace/phone_lock')               # 각자의 디렉토리를 작성해주세요.
-# from ..Dong import controller1
-from Dong import controller1 
-from firecaution import firealarm
-from cctv import ex_scene_adjustment
 
 
-
-
-
+# Please Customize!!!
+# from here#############################################################################################
+# smartspeaker pin
 button = Button(21)
 red = LED(16)
 green = LED(20)
 blue = LED(12)
 yellow = LED(19)
+# smartspeaker my_city
+my_city = 'Seoul'
+
+# firealarm LED
+fire_alarm = 22
+
+# controller 창문 모터
+ena = 26
+in1 = 27
+in2 = 13
+
+# IP addresses
+IP_address = '172.30.1.17'
+RPi_address = '172.30.1.59'
+
+# 카카오 API KEY
+API_KEY = '218c73d60692af6965fa11c043c3bf2d'
+rest_api_key = '0cc8a9986f19c2206904038cf941e3c7'
+
+# 저는 이것을 써야 오류가 안나더라구요... 최상위 폴더 디렉토리를 쓰면 아래와 같이 from firecaution...같이 쓸 수 있고 
+# 아니면 에러가 떴어요 저는... 혹시 이 코드 안쓰고 잘 되면(혹은, 각자의 절대경로를 쓸 시에는) 굳이 안쓰셔도 됩니다.
+sys.path.append(r'/home/pi/workspace/phone_lock')               # 각자의 디렉토리를 작성해주세요.
+
+#############################################################################################
+
+# sys.path.append(r'/home/pi/workspace/phone_lock') 보다 아래에 있어야한다.
+from Dong import controller 
+from firecaution import firealarm
+from cctv import cctv
+
+
+
+
+
 seconds = 5
 fs = 16000
 mqtt_msg = ""
@@ -46,8 +75,6 @@ headers_speech = {
     "X-DSS-Service": "DICTATION",
     "Authorization": "KakaoAK "+ rest_api_key,
     }
-
-
 def get_weather(city='Seoul'):
     URL = f'http://api.openweathermap.org/data/2.5/weather?q={city}&APPID={API_KEY}&lang=kr&units=metric'
     weather = {}
@@ -63,29 +90,20 @@ def get_weather(city='Seoul'):
     else:
         print('error', res.status_code)
     return weather
-
 def getNowAirPollution(pos_lat, pos_lon):  
     url_total = f'http://api.openweathermap.org/data/2.5/air_pollution?lat={pos_lat}&lon={pos_lon}&appid={API_KEY}'
-
     airpollution = {}
     res = requests.get(url_total)
-
     if res.status_code == 200:
         result = res.json()
         airpollution['airpollution'] = result['list'][0]['main']['aqi']
     else:
         print('error', res.status_code)
-
-
     return airpollution
     
-
     
-
-weather = get_weather('Seoul')
+weather = get_weather(my_city)
 airpollution = getNowAirPollution(weather['coord']['lat'],weather['coord']['lon'])
-
-
 def question():
     DATA = """
     <speak>
@@ -96,15 +114,12 @@ def question():
     sound = io.BytesIO(res.content)
     song = AudioSegment.from_mp3(sound)
     play(song)
-
 def recoding():
     seconds = 5
     myrecording = sd.rec(int(seconds * fs), samplerate = fs, channels = 1)
     
     sd.wait()
-
     sf.write('translate.wav', myrecording, fs)
-
     with open('translate.wav', 'rb') as fp:
         audio = fp.read()
     res = requests.post(kakao_speech_url, headers=headers_speech, data=audio)
@@ -115,10 +130,7 @@ def recoding():
     result_json_string = res.text[start:end]
     result = json.loads(result_json_string)
     print(result['value'])
-
     return result['value']
-
-
 def translate():
     DATA = """
     <speak>
@@ -130,11 +142,9 @@ def translate():
     text = recoding()
     source = 'kr'
     target = 'en'
-
     params = {'query':text, 'src_lang':source, 'target_lang':target}
     header_translate = {'authorization': f'KakaoAK {rest_api_key}'}
     response = requests.get(url=translate_url, headers=header_translate, params=params)
-
     if response.status_code == 200:
         decode = response.json()
         translated = decode['translated_text'][0][0]
@@ -142,14 +152,11 @@ def translate():
         print('error', response.status_code)
     
     return translated
-
-
 def output_text(DATA):
     res_audio = requests.post(kakao_audio_url, headers = HEADERS, data = DATA.encode('utf-8'))
     sound = io.BytesIO(res_audio.content)
     song = AudioSegment.from_mp3(sound)
     play(song)
-
 def print_current_coin(coin):
     
     coin_value1 = pyupbit.get_current_price(coin)
@@ -176,19 +183,14 @@ def print_current_coin(coin):
     KRW_coin = KRW_coin + "원"
     if coin == "KRW-BTC":
         coin_name = "비트"
-
     if coin == "KRW-ETH":
         coin_name = "이더리움"
-
     if coin == "KRW-SAND":
         coin_name = "샌드박스" 
-
     if coin == "KRW-LTC":
         coin_name = "라이트"
-
     if coin == "KRW-XRP":
         coin_name = "리플"
-
     DATA = f"""
     <speak>
        현재  {coin_name} 코인의 시세는 {KRW_coin} 입니다.
@@ -200,9 +202,7 @@ client = mqtt.Client()
 def mqtt():
     def on_connect(client, userdata, flags, rc):
         print("Connected with result code "+str(rc))
-
         client.subscribe("Mqtt")
-
     def on_message(client, userdata, msg):
         global mqtt_msg
         # mqtt_msg = str(msg.payload)
@@ -210,7 +210,7 @@ def mqtt():
     
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect("192.168.0.3",1883,60)
+    client.connect(IP_address,1883,60)
     client.loop_forever()
 
 
@@ -222,11 +222,9 @@ def rasp_trans(text):
     trans_text = text
     source = 'kr'
     target = 'en'
-
     params = {'query':trans_text, 'src_lang':source, 'target_lang':target}
     header_translate = {'authorization': f'KakaoAK {rest_api_key}'}
     response = requests.get(url=translate_url, headers=header_translate, params=params)
-
     if response.status_code == 200:
         decode = response.json()
         translated = decode['translated_text'][0][0]
@@ -236,7 +234,6 @@ def rasp_trans(text):
     msg = f"trans,{translated}"
     client.publish("Mqtt_pb", msg)
     return translated
-
 # 한식 중식, 일식, 양식, 간편식, 무관
 # 매움 안매움 무관
 # 면류 비면류 무관
@@ -285,11 +282,6 @@ def select_category(kind, spicy, noodle):
     for temp in noodle_selected_list:
         final_list.append(temp[0])
     return final_list
-
-
-
-
-
 #####################################################################################################################################################################
 #####################################################################################################################################################################
 #####################################################################################################################################################################
@@ -297,9 +289,9 @@ def select_category(kind, spicy, noodle):
 #####################################################################################################################################################################
 
 def main():
-    controller1.Controller().start()
-    Thread(target = firealarm.main).start()
-    Thread(target = ex_scene_adjustment.main).start()
+    controller.Controller(IP_address, ena, in1, in2).start()
+    Thread(target = firealarm.main, args=(IP_address, fire_alarm)).start()
+    cctv.CCTV().start()
 
     mqtt_msg = ""
     air_condition = ""
@@ -310,11 +302,8 @@ def main():
     umbrella = ""
     if ((weather['main']).find("Rain") == 0):
         umbrella = "밖에 비가 오니 우산을 챙기셔야 합니다."
-
     if ((weather['main']).find("Snow") == 0):
         umbrella = "밖에 눈이 오니 우산을 챙기셔야 합니다."
-
-
     while(True):
         if(weather['main'] == 'Clouds'):
             green.on()
@@ -341,13 +330,10 @@ def main():
                 </speak>
                 """
                 output_text(DATA)
-
             # 이름
             # 한식 중식, 일식, 양식, 간편식, 무관
             # 매움 안매움 무관
             # 면류 비면류 무관
-
-
             if(answer == "뭐먹지" or answer == '뭐 먹지'):
                 DATA = f"""
                 <speak>
@@ -376,7 +362,6 @@ def main():
                             음식을 나열하겠습니다. 
                             </speak>
                             """)
-
                 if(answer1 in food_category[0] and answer2 in food_category[1] and answer3 in food_category[2]):
                     for food in select_category(answer1, answer2, answer3):
                         output_text(f"""
@@ -384,11 +369,6 @@ def main():
                         {food}
                         </speak>
                         """)
-
-
-
-
-
             if(answer == "번역기 틀어줘"):
                 translated_text = translate()
                 print(translated_text)
@@ -398,7 +378,6 @@ def main():
                 </speak>
                 """
                 output_text(DATA)
-
             if(answer == "비트코인 시세 알려줘"):
                 print_current_coin("KRW-BTC")
             if(answer == "이더리움 시세 알려줘"):
@@ -438,7 +417,6 @@ def main():
                             음식을 나열하겠습니다. 
                             </speak>
                             """)
-
                 if(answer1 in food_category[0] and answer2 in food_category[1] and answer3 in food_category[2]):
                     for food in select_category(answer1, answer2, answer3):
                         output_text(f"""
@@ -446,6 +424,7 @@ def main():
                         {food}
                         </speak>
                         """)
+
 
         if(mqtt_msg == "weather"):
             mqtt_msg = ""
@@ -460,7 +439,6 @@ def main():
                 </speak>
                 """
             output_text(DATA)
-
         if "trans" in mqtt_msg:
             msg = mqtt_msg[5:]
             mqtt_msg = ""
@@ -489,6 +467,4 @@ def main():
         if(mqtt_msg == "xrp"):
             mqtt_msg = ""
             print_current_coin("KRW-XRP")
-
-
 main()
