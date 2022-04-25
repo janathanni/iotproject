@@ -410,7 +410,7 @@ def main():
             if(answer == "리플 시세 알려줘"):
                 print_current_coin("KRW-XRP")
 
-        if(answer == 'food'):
+        if(mqtt_msg == 'food'):
                 DATA = f"""
                 <speak>
                 한식, 중식, 일식, 양식, 간편식, 무관 중 선택해주세요.
