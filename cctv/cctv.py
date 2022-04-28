@@ -63,6 +63,9 @@ class CCTV(Thread):
             draw.text(xy=(10, 15),  text="IOT_3 Webcam "+nowDatetime, font=self.font, fill=(255, 255, 255))
             frame = np.array(frame)
 
+            _, jpg = cv2.imencode('.JPEG', frame)
+            
+
             key = cv2.waitKey(30)
             if key == ord('r') and self.is_record == False: 
                 self.is_record = True           

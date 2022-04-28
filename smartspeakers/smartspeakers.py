@@ -36,8 +36,8 @@ in1 = 27
 in2 = 13
 
 # IP addresses
-IP_address = '172.30.1.17'
-RPi_address = '172.30.1.59'
+IP_address = '172.30.1.33'
+RPi_address = '172.30.1.49'
 
 # 카카오 API KEY
 API_KEY = '218c73d60692af6965fa11c043c3bf2d'

@@ -42,11 +42,8 @@ class MJpegStreamCam(USBCam):
                 frame = self.make_frame()
 
                 if self.msg:
-                    if self.msg[-1] == 'q':
-                        print('hi')
-                        self.msg.pop()
 
-                    elif self.msg[-1] == 'r' and self.is_record == True:
+                    if self.msg[-1] == 'r' and self.is_record == True:
                         self.video.write(frame)
 
                     elif self.msg[-1] == 'r' and self.is_record == False:
